@@ -4,6 +4,8 @@ import { Calendar } from "@/components/ui/calendar";
 import { Calendar22 } from "@/components/ui/DatePicker";
 import { Dialog } from "@/components/ui/dialog";
 import DialogWrapper from "@/custom-components/CustomDialog";
+import CustomButton from "@/custom-components/CustomeButton";
+import { PlusIcon } from "lucide-react";
 import React from "react";
 
 const Home: React.FC = () => {
@@ -29,6 +31,9 @@ const Home: React.FC = () => {
           <p>This is fully customizable JSX inside the dialog.</p>
         </div>
       </DialogWrapper>
+       <CustomButton className="text-black" layout="theme_black" icon={<PlusIcon />} isLoading={false}>
+        Submit
+      </CustomButton>
     </div>
   );
 };
