@@ -1,8 +1,11 @@
+import { axiosRequest, getConfig } from './axios';
 import type { PaginatedApiQueryContext } from './types';
 
 export interface Post {
   id: number;
   title: string;
+  body?: string;
+  userId?: number;
 }
 
 /**
@@ -10,13 +13,21 @@ export interface Post {
  */
 export async function fetchPosts({ queryKey }: PaginatedApiQueryContext): Promise<Post[]> {
   const [, { page, limit }] = queryKey;
-  const res = await fetch(
-    `https://jsonplaceholder.typicode.com/posts?_page=${page}&_limit=${limit}`
-  );
-  if (!res.ok) {
-    throw new Error("Failed to fetch posts");
-  }
-  return res.json();
+  const config = getConfig('GET', '/posts', undefined, {
+    _page: page,
+    _limit: limit,
+  });
+  const response = await axiosRequest<Post[]>(config);
+  return response.data;
+}
+
+/**
+ * Fetches a single post by ID
+ */
+export async function fetchPostById(id: number): Promise<Post> {
+  const config = getConfig('GET', `/posts/${id}`);
+  const response = await axiosRequest<Post>(config);
+  return response.data;
 }
 
 export interface CreatePostData {
@@ -29,17 +40,48 @@ export interface CreatePostData {
  * Creates a new post via JSONPlaceholder API
  */
 export async function createPost(postData: CreatePostData): Promise<Post> {
-  const res = await fetch('https://jsonplaceholder.typicode.com/posts', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(postData),
-  });
-  
-  if (!res.ok) {
-    throw new Error('Failed to create post');
-  }
-  
-  return res.json();
+  const config = getConfig('POST', '/posts', postData);
+  const response = await axiosRequest<Post>(config);
+  return response.data;
+}
+
+export interface UpdatePostData {
+  title?: string;
+  body?: string;
+  userId?: number;
+}
+
+/**
+ * Updates an existing post via JSONPlaceholder API
+ */
+export async function updatePost(id: number, postData: UpdatePostData): Promise<Post> {
+  const config = getConfig('PUT', `/posts/${id}`, postData);
+  const response = await axiosRequest<Post>(config);
+  return response.data;
+}
+
+/**
+ * Partially updates an existing post via JSONPlaceholder API
+ */
+export async function patchPost(id: number, postData: Partial<UpdatePostData>): Promise<Post> {
+  const config = getConfig('PATCH', `/posts/${id}`, postData);
+  const response = await axiosRequest<Post>(config);
+  return response.data;
+}
+
+/**
+ * Deletes a post via JSONPlaceholder API
+ */
+export async function deletePost(id: number): Promise<void> {
+  const config = getConfig('DELETE', `/posts/${id}`);
+  await axiosRequest<void>(config);
+}
+
+/**
+ * Fetches posts by user ID
+ */
+export async function fetchPostsByUserId(userId: number): Promise<Post[]> {
+  const config = getConfig('GET', '/posts', undefined, { userId });
+  const response = await axiosRequest<Post[]>(config);
+  return response.data;
 }

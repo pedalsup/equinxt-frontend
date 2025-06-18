@@ -21,6 +21,15 @@ type FormAction =
   | { type: "RESET_FORM" }
   | { type: "LOAD_DATA"; data: FormData }
 
+/**
+ * Reducer function for managing the state of a multi-step form.
+ * Handles various actions like setting form fields, navigating steps, 
+ * managing errors, and resetting the form.
+ * 
+ * @param state - The current form state
+ * @param action - The action to be performed on the form state
+ * @returns The updated form state based on the dispatched action
+ */
 const formReducer = (state: FormState, action: FormAction): FormState => {
   switch (action.type) {
     case "SET_FIELD":
@@ -252,6 +261,14 @@ export const useMultiStepForm = (steps: FormStep[], persistData = false) => {
   }
 }
 
+/**
+ * Checks a conditional comparison between a value and an expected value using a specified operator.
+ * 
+ * @param value The current value to compare
+ * @param expectedValue The expected value to compare against
+ * @param operator The comparison operator (defaults to "equals")
+ * @returns A boolean indicating whether the condition is met
+ */
 const checkConditional = (value: any, expectedValue: any, operator = "equals"): boolean => {
   switch (operator) {
     case "not-equals":
